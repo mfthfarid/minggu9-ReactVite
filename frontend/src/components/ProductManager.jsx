@@ -14,22 +14,19 @@ const ProductManager = () => {
     updateProduct,
     deleteProduct,
   } = useProducts();
-
   const [editingProduct, setEditingProduct] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
-  // ✅ Tambah Produk
   const handleCreateProduct = async (productData) => {
     try {
       const response = await createProduct(productData);
       setSuccessMessage(`✅ ${response.message}`);
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
-      console.error(error);
+      // Error handled in hook
     }
   };
 
-  // ✅ Update Produk
   const handleUpdateProduct = async (productData) => {
     try {
       const response = await updateProduct(editingProduct.id, productData);
@@ -37,11 +34,10 @@ const ProductManager = () => {
       setEditingProduct(null);
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
-      console.error(error);
+      // Error handled in hook
     }
   };
 
-  // ✅ Hapus Produk
   const handleDeleteProduct = async (id) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
@@ -49,12 +45,11 @@ const ProductManager = () => {
         setSuccessMessage(`✅ ${response.message}`);
         setTimeout(() => setSuccessMessage(""), 3000);
       } catch (error) {
-        console.error(error);
+        // Error handled in hook
       }
     }
   };
 
-  // ✅ Refresh Data
   const handleRefresh = () => {
     fetchProducts();
     setSuccessMessage("");
@@ -72,7 +67,6 @@ const ProductManager = () => {
       )}
 
       <div className="manager-content">
-        {/* Sidebar Form */}
         <aside className="sidebar">
           <ProductForm
             onSubmit={
@@ -86,14 +80,12 @@ const ProductManager = () => {
           {editingProduct && (
             <button
               onClick={() => setEditingProduct(null)}
-              className="cancel-edit-btn"
-            >
+              className="cancel-edit-btn">
               Cancel Edit
             </button>
           )}
         </aside>
 
-        {/* Daftar Produk */}
         <main className="main-content">
           <ProductList
             products={products}

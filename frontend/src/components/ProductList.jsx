@@ -9,17 +9,15 @@ const ProductList = ({
   onEdit,
   onDelete,
 }) => {
-  // Jika masih loading dan belum ada data
   if (loading && products.length === 0) {
     return (
       <div className="loading">
         <div className="spinner"></div>
-        <p>Loading products...</p>
+        <p>Loading products from MySQL database...</p>
       </div>
     );
   }
 
-  // Jika ada error
   if (error) {
     return (
       <div className="error">
@@ -30,22 +28,19 @@ const ProductList = ({
       </div>
     );
   }
-
-  // Jika produk kosong
   if (products.length === 0) {
     return (
       <div className="empty-state">
-        <p>📦 No products found</p>
+        <p>📦 No products found in database</p>
         <p>Add your first product using the form!</p>
       </div>
     );
   }
 
-  // Jika ada data produk
   return (
     <div className="product-list">
       <div className="list-header">
-        <h3>Products ({products.length})</h3>
+        <h3> Products ({products.length})</h3>
         <button onClick={onRefresh} className="refresh-btn">
           🔄 Refresh
         </button>
@@ -54,57 +49,57 @@ const ProductList = ({
       <div className="products-grid">
         {products.map((product) => (
           <div key={product.id} className="product-card">
-            {/* Header Card */}
             <div className="card-header">
               <span className="product-id">#{product.id}</span>
-              <span className="product-category">{product.category}</span>
+              <span
+                className="product
+category">
+                {product.category}
+              </span>
             </div>
 
-            {/* Nama Produk */}
             <h4 className="product-name">{product.name}</h4>
 
-            {/* Detail Produk */}
             <div className="product-details">
               <p className="product-price">
-                Rp {product.price.toLocaleString()}
+                Rp
+                {product.price.toLocaleString()}
               </p>
               <p className="product-stock">
                 Stock:{" "}
                 <span
-                  className={product.stock === 0 ? "out-of-stock" : "in-stock"}
-                >
+                  className={product.stock === 0 ? "out-of-stock" : "in-stock"}>
                   {product.stock}
                 </span>
               </p>
+              {product.description && (
+                <p
+                  className="product
+description">
+                  {product.description}
+                </p>
+              )}
             </div>
 
-            {/* Footer Card */}
             <div className="card-footer">
               <span className="created-at">
-                Added:{" "}
-                {new Date(product.createdAt).toLocaleDateString("id-ID", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
+                Added: {new Date(product.created_at).toLocaleDateString()}
               </span>
             </div>
 
-            {/* Aksi */}
             <div className="card-actions">
               <button
                 onClick={() => onEdit(product)}
                 className="edit-btn"
-                title="Edit product"
-              >
+                title="Edit product">
                 ✏️ Edit
               </button>
+
               <button
                 onClick={() => onDelete(product.id)}
                 className="delete-btn"
                 title="Delete product"
-                disabled={loading}
-              >
+                disabled={loading}>
                 🗑️ Delete
               </button>
             </div>

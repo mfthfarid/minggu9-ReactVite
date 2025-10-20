@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { productAPI } from "../services/api";
+
 export const useProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
   // Fetch all products
   const fetchProducts = async () => {
     try {
@@ -17,6 +19,7 @@ export const useProducts = () => {
       setLoading(false);
     }
   };
+
   // Create new product
   const createProduct = async (productData) => {
     try {
@@ -31,6 +34,7 @@ export const useProducts = () => {
       setLoading(false);
     }
   };
+
   // Update product
   const updateProduct = async (id, productData) => {
     try {
@@ -49,6 +53,7 @@ export const useProducts = () => {
       setLoading(false);
     }
   };
+
   // Delete product
   const deleteProduct = async (id) => {
     try {
@@ -65,10 +70,12 @@ export const useProducts = () => {
       setLoading(false);
     }
   };
+
   // Fetch products on component mount
   useEffect(() => {
     fetchProducts();
   }, []);
+
   return {
     products,
     loading,

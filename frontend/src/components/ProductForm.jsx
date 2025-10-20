@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import "./ProductForm.css";
 
-const ProductForm = ({ onSubmit, loading }) => {
+const ProductForm = ({
+  onSubmit,
+  loading,
+  initialData,
+  buttonText = "Add Product",
+}) => {
   const [formData, setFormData] = useState({
-    name: "",
-    price: "",
-    category: "",
-    stock: "",
+    name: initialData?.name || "",
+    price: initialData?.price || "",
+    category: initialData?.category || "",
+    stock: initialData?.stock || "",
+    description: initialData?.description || "",
   });
-
   const [errors, setErrors] = useState({});
 
   const categories = [
@@ -27,7 +32,6 @@ const ProductForm = ({ onSubmit, loading }) => {
       [name]: value,
     }));
 
-    // Hapus error ketika user mengetik ulang
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -57,35 +61,39 @@ const ProductForm = ({ onSubmit, loading }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!validateForm()) return;
 
     try {
       await onSubmit({
         name: formData.name.trim(),
-        price: parseInt(formData.price),
+        price: parseFloat(formData.price),
         category: formData.category,
         stock: parseInt(formData.stock) || 0,
+        description: formData.description.trim(),
       });
 
-      // Reset form setelah berhasil submit
-      setFormData({
-        name: "",
-        price: "",
-        category: "",
-        stock: "",
-      });
+      // Reset form if not editing
+      if (!initialData) {
+        setFormData({
+          name: "",
+          price: "",
+          category: "",
+          stock: "",
+          description: "",
+        });
+      }
       setErrors({});
     } catch (error) {
-      // Error ditangani oleh parent component
-      console.error(error);
+      // Error handled in parent
     }
   };
 
   return (
     <div className="product-form">
-      <h3>➕ Add New Product</h3>
+      <h3>{initialData ? "✏️ Edit Product" : "➕ Add New Product"}</h3>
+
       <form onSubmit={handleSubmit}>
-        {/* Product Name */}
         <div className="form-group">
           <label>Product Name *</label>
           <input
@@ -97,10 +105,15 @@ const ProductForm = ({ onSubmit, loading }) => {
             className={errors.name ? "error" : ""}
             disabled={loading}
           />
-          {errors.name && <span className="errortext">{errors.name}</span>}
+          {errors.name && (
+            <span
+              className="error
+text">
+              {errors.name}
+            </span>
+          )}
         </div>
 
-        {/* Price */}
         <div className="form-group">
           <label>Price (IDR) *</label>
           <input
@@ -110,13 +123,13 @@ const ProductForm = ({ onSubmit, loading }) => {
             onChange={handleChange}
             placeholder="Enter price"
             min="1"
+            step="0.01"
             className={errors.price ? "error" : ""}
             disabled={loading}
           />
-          {errors.price && <span className="errortext">{errors.price}</span>}
+          {errors.price && <span className="error text">{errors.price}</span>}
         </div>
 
-        {/* Category */}
         <div className="form-group">
           <label>Category *</label>
           <select
@@ -124,8 +137,7 @@ const ProductForm = ({ onSubmit, loading }) => {
             value={formData.category}
             onChange={handleChange}
             className={errors.category ? "error" : ""}
-            disabled={loading}
-          >
+            disabled={loading}>
             <option value="">Select category</option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
@@ -134,11 +146,10 @@ const ProductForm = ({ onSubmit, loading }) => {
             ))}
           </select>
           {errors.category && (
-            <span className="errortext">{errors.category}</span>
+            <span className="error text">{errors.category}</span>
           )}
         </div>
 
-        {/* Stock */}
         <div className="form-group">
           <label>Stock Quantity</label>
           <input
@@ -152,9 +163,20 @@ const ProductForm = ({ onSubmit, loading }) => {
           />
         </div>
 
-        {/* Submit Button */}
+        <div className="form-group">
+          <label>Description</label>
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Enter product description"
+            rows="3"
+            disabled={loading}
+          />
+        </div>
+
         <button type="submit" disabled={loading} className="submit-btn">
-          {loading ? "Adding..." : "Add Product"}
+          {loading ? "Processing..." : buttonText}
         </button>
       </form>
     </div>
